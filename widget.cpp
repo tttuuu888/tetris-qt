@@ -125,6 +125,11 @@ void Widget::breakBlocks()
             this->score += 100;
         }
     }
+
+    if(this->score / 1000 > this->level) {
+        this->level++;
+        this->adjustGameDelay();
+    }
 }
 
 void Widget::moveAboveColumns(int column)
@@ -156,6 +161,13 @@ bool Widget::isGameOver()
         return false;
 
     return !this->playGame;
+}
+
+void Widget::adjustGameDelay()
+{
+    qDebug("Level : %d", this->level);
+    ui->spinLevel->setValue(this->level);
+    this->gameDelay = 1200 - (this->level * 100);
 }
 
 void Widget::gameStart()
@@ -205,7 +217,6 @@ void Widget::boardInit()
                 this->board[i][j] = 0;
         }
     }
-
 }
 
 bool Widget::isBlockAbleToMove(Direction dir)
@@ -301,7 +312,8 @@ void Widget::on_btnStart_clicked()
 
 void Widget::on_spinLevel_valueChanged(int arg1)
 {
-    this->gameDelay = 1200 - (arg1 * 100);
+    this->level = arg1;
+    this->adjustGameDelay();
 }
 
 bool Widget::eventFilter(QObject *watched, QEvent *event)

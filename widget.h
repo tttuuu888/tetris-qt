@@ -39,6 +39,7 @@ private:
     bool initialStatus;
     Block *currentBlock;
     int score;
+    int level;
 
     void init();
     void game();
@@ -55,6 +56,7 @@ private:
     bool isBlockDrawable();
     bool isBlockAbleToRotate();
     bool isGameOver();
+    void adjustGameDelay();
     void gameStart();
     void gameOver();
 
