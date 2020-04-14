@@ -60,6 +60,7 @@ void Widget::onTimer()
     else
     {
         this->addBlockToBoard();
+        this->breakBlocks();
         this->currentBlock->init(qrand()%7 + 2);
         if(!this->isBlockDrawable())
             this->gameOver();
@@ -118,6 +119,30 @@ void Widget::addBlockToBoard()
                 this->board[i][j] = this->currentBlock->getSquare(i-sy, j-sx);
 }
 
+void Widget::breakBlocks()
+{
+    for(int i=1; i<boardHeight-1; i++) {
+        int emptySquares = 0;
+
+        for(int j=1; j<boardWidth-1; j++) {
+           if(this->board[i][j] == 0)
+               emptySquares++;
+        }
+
+        if(emptySquares == 0) {
+            this->moveAboveColumns(i);
+        }
+
+    }
+}
+
+void Widget::moveAboveColumns(int column)
+{
+    for(int i=column; i>1; i--)
+        for(int j=1; j<boardWidth-1; j++)
+            this->board[i][j] = this->board[i-1][j];
+}
+
 void Widget::drawSquare(QPainter &p, int y, int x, int type)
 {
     const int startY = 40;
@@ -126,9 +151,8 @@ void Widget::drawSquare(QPainter &p, int y, int x, int type)
     int xx = startX + (x * blockSize);
     int yy = startY + (y * blockSize);
 
-//    QLinearGradient m_gradient(0,0,0,100);
-//    m_gradient.setColorAt(0.0, Qt::blue);
-//    m_gradient.setColorAt(1.0, Qt::red);
+    if(xx > startX + boardWidth * blockSize || yy > startY + boardHeight * blockSize)
+        return;
 
     QPen pen(this->typeToColor(type));
     p.setBrush(QBrush(this->typeToColor(type), Qt::SolidPattern));

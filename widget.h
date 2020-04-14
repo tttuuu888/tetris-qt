@@ -48,6 +48,8 @@ private:
     void drawSquare(QPainter &p, int y, int x, int type);
     void drawGameOver(QPainter &p);
     void addBlockToBoard();
+    void breakBlocks();
+    void moveAboveColumns(int column);
     bool isBlockAbleToMove(Direction dir);
     bool isBlockDrawable();
     bool isBlockAbleToRotate();
