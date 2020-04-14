@@ -47,6 +47,7 @@ private:
     void drawBlock(QPainter &p);
     void drawSquare(QPainter &p, int y, int x, int type);
     void drawGameOver(QPainter &p);
+    void boardInit();
     void addBlockToBoard();
     void breakBlocks();
     void moveAboveColumns(int column);

@@ -26,22 +26,13 @@ void Widget::init()
 
     this->installEventFilter(this);
 
-
-    for(int i=0; i<boardHeight; i++) {
-        for(int j=0; j<boardWidth; j++) {
-            if(i==0 || i == boardHeight - 1 || j==0 || j== boardWidth -1)
-                this->board[i][j] = 1;
-            else
-                this->board[i][j] = 0;
-        }
-    }
+    this->boardInit();
 
     connect(&timer, SIGNAL(timeout()), this, SLOT(onTimer()));
 
     this->tmp = 0;
     this->playGame = false;
     this->gameDelay = 1200;
-    this->score = 0;
     this->currentBlock = new Block(2);
 }
 
@@ -131,8 +122,8 @@ void Widget::breakBlocks()
 
         if(emptySquares == 0) {
             this->moveAboveColumns(i);
+            this->score += 100;
         }
-
     }
 }
 
@@ -174,7 +165,7 @@ void Widget::gameStart()
     ui->btnStart->setText("Stop");
     ui->spinLevel->setEnabled(false);
     this->currentBlock->init(qrand()%7 + 2);
-    this->score = 0;
+    this->boardInit();
     this->playGame = true;
 
     this->setFocus();
@@ -200,6 +191,21 @@ void Widget::drawGameOver(QPainter &p)
 
     QString result = QString::asprintf("Score : %d", this->score);
     p.drawText(QRect(30, 170, 220, 180), Qt::AlignCenter, result);
+}
+
+void Widget::boardInit()
+{
+    this->score = 0;
+
+    for(int i=0; i<boardHeight; i++) {
+        for(int j=0; j<boardWidth; j++) {
+            if(i==0 || i == boardHeight - 1 || j==0 || j== boardWidth -1)
+                this->board[i][j] = 1;
+            else
+                this->board[i][j] = 0;
+        }
+    }
+
 }
 
 bool Widget::isBlockAbleToMove(Direction dir)
