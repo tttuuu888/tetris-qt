@@ -29,10 +29,7 @@ private slots:
 
 private:
     Ui::Widget *ui;
-    QPainter *painter;
-    QVector<QVector<int>> vec;
     QTimer timer;
-    int tmp;
     int gameDelay;
     int board[boardHeight][boardWidth];
     bool playGame;
@@ -42,7 +39,6 @@ private:
     int level;
 
     void init();
-    void game();
     void paintEvent(QPaintEvent *e);
     void drawBoard(QPainter &p);
     void drawBlock(QPainter &p);
@@ -55,6 +51,7 @@ private:
     bool isBlockAbleToMove(Direction dir);
     bool isBlockDrawable();
     bool isBlockAbleToRotate();
+    bool isBlockAndBoardOverlap();
     bool isGameOver();
     void adjustGameDelay();
     void gameStart();

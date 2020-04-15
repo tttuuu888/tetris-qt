@@ -9,7 +9,6 @@ Widget::Widget(QWidget *parent)
     , ui(new Ui::Widget)
 {
     init();
-    game();
 }
 
 Widget::~Widget()
@@ -30,15 +29,9 @@ void Widget::init()
 
     connect(&timer, SIGNAL(timeout()), this, SLOT(onTimer()));
 
-    this->tmp = 0;
     this->playGame = false;
     this->gameDelay = 1200;
     this->currentBlock = new Block(2);
-}
-
-void Widget::game()
-{
-    qDebug("game play");
 }
 
 void Widget::onTimer()
@@ -58,7 +51,6 @@ void Widget::onTimer()
     }
 
     update();
-    this->tmp++;
 }
 
 void Widget::paintEvent(QPaintEvent *e)
@@ -197,8 +189,8 @@ void Widget::drawGameOver(QPainter &p)
     ui->spinLevel->setEnabled(true);
 
     p.fillRect(QRect(40,200,200,100), QBrush(QColor(155,0,255,128)));
-    p.setFont(QFont("Arial", 25));    // set font
-    p.setPen(Qt::red);              // set color
+    p.setFont(QFont("Arial", 25));
+    p.setPen(Qt::red);
     p.drawText(QRect(30, 140, 220, 180), Qt::AlignCenter, "Game Over");
 
     QString result = QString::asprintf("Score : %d", this->score);
@@ -236,9 +228,12 @@ bool Widget::isBlockAbleToMove(Direction dir)
         break;
     }
 
+    if(sx < 0 || sx >= boardWidth || sy < 0 || sy >= boardHeight)
+        return false;
+
     for(int i=sy; i<sy+4; i++)
         for(int j=sx; j<sx+4; j++)
-            if(i>1 && this->board[i][j] != 0 && this->currentBlock->getSquare(i-sy, j-sx) != 0)
+            if(this->board[i][j] != 0 && this->currentBlock->getSquare(i-sy, j-sx) != 0)
                 return false;
 
     return true;
@@ -246,32 +241,31 @@ bool Widget::isBlockAbleToMove(Direction dir)
 
 bool Widget::isBlockDrawable()
 {
-    int sy = this->currentBlock->getPy();
-    int sx = this->currentBlock->getPx();
-
-    for(int i=sy; i<sy+4; i++)
-        for(int j=sx; j<sx+4; j++)
-            if(i>1 && this->board[i][j] != 0 && this->currentBlock->getSquare(i-sy, j-sx) != 0)
-                return false;
-
-    return true;
+    return !(this->isBlockAndBoardOverlap());
 }
 
 bool Widget::isBlockAbleToRotate()
 {
-    bool result = true;
     this->currentBlock->rotate(1);
+
+    bool result = !(this->isBlockAndBoardOverlap());
+
+    this->currentBlock->rotate(-1);
+
+    return result;
+}
+
+bool Widget::isBlockAndBoardOverlap()
+{
     int sy = this->currentBlock->getPy();
     int sx = this->currentBlock->getPx();
 
     for(int i=sy; i<sy+4; i++)
         for(int j=sx; j<sx+4; j++)
-            if(i>1 && this->board[i][j] != 0 && this->currentBlock->getSquare(i-sy, j-sx) != 0)
-                result = false;
+            if(this->board[i][j] != 0 && this->currentBlock->getSquare(i-sy, j-sx) != 0)
+                return true;
 
-    this->currentBlock->rotate(-1);
-    return result;
-
+    return false;
 }
 
 Qt::GlobalColor Widget::typeToColor(int type)
