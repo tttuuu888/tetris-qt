@@ -45,6 +45,7 @@ void Widget::onTimer()
     {
         this->addBlockToBoard();
         this->breakBlocks();
+        this->adjustGameLevel();
         this->currentBlock->init(qrand()%7 + 2);
         if(!this->isBlockDrawable())
             this->gameOver();
@@ -89,6 +90,9 @@ void Widget::drawBlock(QPainter &p)
             if(this->board[i][j] == 0)
                 this->drawSquare(p, i,j, this->currentBlock->getSquare(i-sy, j-sx));
         }
+
+    ui->editLevel->setText(QString::number(this->level));
+    ui->editScore->setText(QString::number(this->score));
 }
 
 void Widget::addBlockToBoard()
@@ -116,11 +120,6 @@ void Widget::breakBlocks()
             this->moveAboveColumns(i);
             this->score += 100;
         }
-    }
-
-    if(this->score / 1000 > this->level) {
-        this->level++;
-        this->adjustGameDelay();
     }
 }
 
@@ -155,11 +154,18 @@ bool Widget::isGameOver()
     return !this->playGame;
 }
 
-void Widget::adjustGameDelay()
+void Widget::adjustGameLevel()
 {
+    if(this->score / 1000 < this->level)
+        return;
+
+    this->level++;
+
     qDebug("Level : %d", this->level);
-    ui->spinLevel->setValue(this->level);
-    this->gameDelay = 1200 - (this->level * 100);
+    int newDealy = this->gameDelay = 1200 - (this->level * 100);
+
+    this->gameDelay = newDealy > 100 ? newDealy : 100;
+    this->timer.setInterval(this->gameDelay);
 }
 
 void Widget::gameStart()
@@ -167,7 +173,6 @@ void Widget::gameStart()
     qDebug("game start");
     this->timer.start(this->gameDelay);
     ui->btnStart->setText("Stop");
-    ui->spinLevel->setEnabled(false);
     this->currentBlock->init(qrand()%7 + 2);
     this->boardInit();
     this->playGame = true;
@@ -186,7 +191,6 @@ void Widget::drawGameOver(QPainter &p)
 {
     qDebug("game over draw");
     ui->btnStart->setText("Start");
-    ui->spinLevel->setEnabled(true);
 
     p.fillRect(QRect(40,200,200,100), QBrush(QColor(155,0,255,128)));
     p.setFont(QFont("Arial", 25));
@@ -199,6 +203,7 @@ void Widget::drawGameOver(QPainter &p)
 
 void Widget::boardInit()
 {
+    this->level = 1;
     this->score = 0;
 
     for(int i=0; i<boardHeight; i++) {
@@ -304,11 +309,6 @@ void Widget::on_btnStart_clicked()
     update();
 }
 
-void Widget::on_spinLevel_valueChanged(int arg1)
-{
-    this->level = arg1;
-    this->adjustGameDelay();
-}
 
 bool Widget::eventFilter(QObject *watched, QEvent *event)
 {

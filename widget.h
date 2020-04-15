@@ -23,7 +23,6 @@ public:
 private slots:
     void on_btnStart_clicked();
 
-    void on_spinLevel_valueChanged(int arg1);
     void onTimer();
     bool eventFilter(QObject* watched, QEvent* event);
 
@@ -53,7 +52,7 @@ private:
     bool isBlockAbleToRotate();
     bool isBlockAndBoardOverlap();
     bool isGameOver();
-    void adjustGameDelay();
+    void adjustGameLevel();
     void gameStart();
     void gameOver();
 
