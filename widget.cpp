@@ -139,7 +139,7 @@ void Widget::drawSquare(QPainter &p, int y, int x, int type)
     int xx = startX + (x * blockSize);
     int yy = startY + (y * blockSize);
 
-    if(xx > startX + boardWidth * blockSize || yy > startY + boardHeight * blockSize)
+    if(xx + blockSize > startX + boardWidth * blockSize || yy + blockSize > startY + boardHeight * blockSize)
         return;
 
     QPen pen(this->typeToColor(type));
