@@ -36,7 +36,7 @@ void Widget::init()
 
 void Widget::onTimer()
 {
-    qDebug("tick");
+//    qDebug("tick");
     if(this->isBlockAbleToMove(Down))
     {
         this->currentBlock->move(Down);
