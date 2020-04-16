@@ -43,12 +43,7 @@ void Widget::onTimer()
     }
     else
     {
-        this->addBlockToBoard();
-        this->breakBlocks();
-        this->adjustGameLevel();
-        this->currentBlock->init(qrand()%7 + 2);
-        if(!this->isBlockDrawable())
-            this->gameOver();
+        this->newBlock();
     }
 
     update();
@@ -121,6 +116,16 @@ void Widget::breakBlocks()
             this->score += 100;
         }
     }
+}
+
+void Widget::newBlock()
+{
+    this->addBlockToBoard();
+    this->breakBlocks();
+    this->adjustGameLevel();
+    this->currentBlock->init(qrand()%7 + 2);
+    if(!this->isBlockDrawable())
+        this->gameOver();
 }
 
 void Widget::moveAboveColumns(int column)
@@ -344,6 +349,7 @@ bool Widget::eventFilter(QObject *watched, QEvent *event)
             while(this->isBlockAbleToMove(Down)) {
                 this->currentBlock->move(Down);
             }
+            this->newBlock();
             update();
             break;
         }

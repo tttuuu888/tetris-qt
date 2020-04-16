@@ -46,6 +46,7 @@ private:
     void boardInit();
     void addBlockToBoard();
     void breakBlocks();
+    void newBlock();
     void moveAboveColumns(int column);
     bool isBlockAbleToMove(Direction dir);
     bool isBlockDrawable();
