@@ -1,6 +1,6 @@
 #include "block.h"
 
-int allBlocks[7][4][4][4] = {
+const int allBlocks[7][4][4][4] = {
     {{{2,2,2,2},
       {0,0,0,0},
       {0,0,0,0},

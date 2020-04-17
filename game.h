@@ -20,17 +20,6 @@ public:
     int getBlockPositionX();
     int getBlockPositionY();
     int getBlockSquareValue(int x, int y);
-    void addCurrentwBlockToBoard();
-    void breakBlocks();
-    void moveAboveColumnsDown(int column);
-    void updateGameLevel();
-    void updateGameDelay();
-    void newBlock();
-    bool isBlockAbleToMove(Direction dir);
-    bool isBlockDrawable();
-    bool isBlockAbleToRotate();
-    bool isBlockAndBoardOverlap();
-    bool isGameOver();
     void gameStart();
     void gameOver();
     void gamePlayTurn();
@@ -51,6 +40,17 @@ private:
 
     Block *currentBlock;
 
+    void addCurrentwBlockToBoard();
+    void breakBlocks();
+    void moveAboveColumnsDown(int column);
+    void newBlock();
+    void updateGameLevel();
+    void updateGameDelay();
+    bool isBlockAbleToMove(Direction dir);
+    bool isBlockDrawable();
+    bool isBlockAbleToRotate();
+    bool isBlockAndBoardOverlap();
+    bool isGameOver();
 };
 
 #endif // GAME_H
