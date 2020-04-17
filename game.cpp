@@ -97,7 +97,7 @@ int Game::getBlockSquareValue(int x, int y)
     return this->currentBlock->getSquare(y, x);
 }
 
-void Game::addNewBlockToBoard()
+void Game::addCurrentwBlockToBoard()
 {
     int sy = this->currentBlock->getPy();
     int sx = this->currentBlock->getPx();
@@ -156,7 +156,7 @@ void Game::updateGameDelay()
 
 void Game::newBlock()
 {
-    this->addNewBlockToBoard();
+    this->addCurrentwBlockToBoard();
     this->breakBlocks();
     this->updateGameLevel();
     this->currentBlock->init(qrand()%7 + 2);

@@ -20,7 +20,7 @@ public:
     int getBlockPositionX();
     int getBlockPositionY();
     int getBlockSquareValue(int x, int y);
-    void addNewBlockToBoard();
+    void addCurrentwBlockToBoard();
     void breakBlocks();
     void moveAboveColumnsDown(int column);
     void updateGameLevel();
