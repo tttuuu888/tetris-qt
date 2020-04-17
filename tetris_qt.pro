@@ -17,12 +17,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     block.cpp \
+    game.cpp \
     main.cpp \
     widget.cpp
 
 HEADERS += \
     block.h \
     defines.h \
+    game.h \
     widget.h
 
 FORMS += \

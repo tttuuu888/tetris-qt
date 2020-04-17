@@ -1,4 +1,5 @@
 #include "widget.h"
+#include "defines.h"
 #include "ui_widget.h"
 #include <QPainter>
 #include <QTimer>
@@ -19,32 +20,17 @@ Widget::~Widget()
 void Widget::init()
 {
     ui->setupUi(this);
-    this->initialStatus = true;
-    QTime time = QTime::currentTime();
-    qsrand((uint)time.msec());
 
     this->installEventFilter(this);
-
-    this->boardInit();
+    this->game = new Game(12, 20);
 
     connect(&timer, SIGNAL(timeout()), this, SLOT(onTimer()));
-
-    this->playGame = false;
-    this->gameDelay = 1200;
-    this->currentBlock = new Block(2);
 }
 
 void Widget::onTimer()
 {
-//    qDebug("tick");
-    if(this->isBlockAbleToMove(Down))
-    {
-        this->currentBlock->move(Down);
-    }
-    else
-    {
-        this->newBlock();
-    }
+    // qDebug("tick");
+    this->game->gamePlayTurn();
 
     update();
 }
@@ -55,84 +41,49 @@ void Widget::paintEvent(QPaintEvent *e)
 
     this->drawBoard(p);
 
-    if(this->isGameOver())
-        this->drawGameOver(p);
-    else
+    switch(this->game->getGameStatus())
+    {
+    case GamePlaying:
         this->drawBlock(p);
+        break;
+    case GameOver:
+        this->gameOver();
+        this->drawGameOver(p);
+        break;
+    default:
+        break;
+    }
+
+    ui->editLevel->setText(QString::number(this->game->getLevel()));
+    ui->editScore->setText(QString::number(this->game->getScore()));
+
+    if(this->timer.interval() != this->game->getGameDelay()) {
+        // qDebug("delay %d to %d", this->timer.interval(), this->game->getGameDelay());
+        this->timer.setInterval(this->game->getGameDelay());
+    }
 
     p.end();
 }
 
 void Widget::drawBoard(QPainter &p)
 {
-    for(int i=0; i<boardHeight; i++) {
-        for(int j=0; j<boardWidth; j++) {
-            this->drawSquare(p, i,j,this->board[i][j]);
+    for(int i=0; i<this->game->getBoardHeight(); i++) {
+        for(int j=0; j<this->game->getBoardWidth(); j++) {
+            this->drawSquare(p, i,j, this->game->getBoardValue(j,i));
         }
     }
 }
 
 void Widget::drawBlock(QPainter &p)
 {
-    if(this->initialStatus)
-        return;
-
-    int sy = this->currentBlock->getPy();
-    int sx = this->currentBlock->getPx();
+    int sy = this->game->getBlockPositionY();
+    int sx = this->game->getBlockPositionX();
 
     for(int i=sy; i<sy+4; i++)
         for(int j=sx; j<sx+4; j++) {
-            if(this->board[i][j] == 0)
-                this->drawSquare(p, i,j, this->currentBlock->getSquare(i-sy, j-sx));
+            if(this->game->getBoardValue(j,i) == 0)
+                this->drawSquare(p, i,j, this->game->getBlockSquareValue(j-sx, i-sy));
         }
-
-    ui->editLevel->setText(QString::number(this->level));
-    ui->editScore->setText(QString::number(this->score));
-}
-
-void Widget::addBlockToBoard()
-{
-    int sy = this->currentBlock->getPy();
-    int sx = this->currentBlock->getPx();
-
-    for(int i=sy; i<sy+4; i++)
-        for(int j=sx; j<sx+4; j++)
-            if(this->board[i][j] == 0)
-                this->board[i][j] = this->currentBlock->getSquare(i-sy, j-sx);
-}
-
-void Widget::breakBlocks()
-{
-    for(int i=1; i<boardHeight-1; i++) {
-        int emptySquares = 0;
-
-        for(int j=1; j<boardWidth-1; j++) {
-           if(this->board[i][j] == 0)
-               emptySquares++;
-        }
-
-        if(emptySquares == 0) {
-            this->moveAboveColumns(i);
-            this->score += 100;
-        }
-    }
-}
-
-void Widget::newBlock()
-{
-    this->addBlockToBoard();
-    this->breakBlocks();
-    this->adjustGameLevel();
-    this->currentBlock->init(qrand()%7 + 2);
-    if(!this->isBlockDrawable())
-        this->gameOver();
-}
-
-void Widget::moveAboveColumns(int column)
-{
-    for(int i=column; i>1; i--)
-        for(int j=1; j<boardWidth-1; j++)
-            this->board[i][j] = this->board[i-1][j];
 }
 
 void Widget::drawSquare(QPainter &p, int y, int x, int type)
@@ -143,7 +94,8 @@ void Widget::drawSquare(QPainter &p, int y, int x, int type)
     int xx = startX + (x * blockSize);
     int yy = startY + (y * blockSize);
 
-    if(xx + blockSize > startX + boardWidth * blockSize || yy + blockSize > startY + boardHeight * blockSize)
+    if(xx + blockSize > startX + this->game->getBoardWidth() * blockSize ||
+       yy + blockSize > startY + this->game->getBoardHeight() * blockSize)
         return;
 
     QPen pen(this->typeToColor(type));
@@ -151,50 +103,9 @@ void Widget::drawSquare(QPainter &p, int y, int x, int type)
     p.drawRect(QRect(xx,yy,blockSize,blockSize));
 }
 
-bool Widget::isGameOver()
-{
-    if(this->initialStatus)
-        return false;
-
-    return !this->playGame;
-}
-
-void Widget::adjustGameLevel()
-{
-    if(this->score / 1000 < this->level)
-        return;
-
-    this->level++;
-
-    qDebug("Level : %d", this->level);
-    int newDealy = this->gameDelay = 1200 - (this->level * 100);
-
-    this->gameDelay = newDealy > 100 ? newDealy : 100;
-    this->timer.setInterval(this->gameDelay);
-}
-
-void Widget::gameStart()
-{
-    qDebug("game start");
-    this->timer.start(this->gameDelay);
-    ui->btnStart->setText("Stop");
-    this->currentBlock->init(qrand()%7 + 2);
-    this->boardInit();
-    this->playGame = true;
-
-    this->setFocus();
-}
-
-void Widget::gameOver()
-{
-    qDebug("game over");
-    this->timer.stop();
-    this->playGame = false;
-}
-
 void Widget::drawGameOver(QPainter &p)
 {
-    qDebug("game over draw");
+    // qDebug("game over draw");
     ui->btnStart->setText("Start");
 
     p.fillRect(QRect(40,200,200,100), QBrush(QColor(155,0,255,128)));
@@ -202,81 +113,26 @@ void Widget::drawGameOver(QPainter &p)
     p.setPen(Qt::red);
     p.drawText(QRect(30, 140, 220, 180), Qt::AlignCenter, "Game Over");
 
-    QString result = QString::asprintf("Score : %d", this->score);
+    QString result = QString::asprintf("Score : %d", this->game->getScore());
     p.drawText(QRect(30, 170, 220, 180), Qt::AlignCenter, result);
 }
 
-void Widget::boardInit()
+void Widget::gameStart()
 {
-    this->level = 1;
-    this->score = 0;
+    // qDebug("game start");
+    this->game->gameStart();
+    this->timer.start(this->game->getGameDelay());
+    ui->btnStart->setText("Stop");
 
-    for(int i=0; i<boardHeight; i++) {
-        for(int j=0; j<boardWidth; j++) {
-            if(i==0 || i == boardHeight - 1 || j==0 || j== boardWidth -1)
-                this->board[i][j] = 1;
-            else
-                this->board[i][j] = 0;
-        }
-    }
+    this->setFocus();
 }
 
-bool Widget::isBlockAbleToMove(Direction dir)
+void Widget::gameOver()
 {
-    int sy = this->currentBlock->getPy();
-    int sx = this->currentBlock->getPx();
-
-    switch(dir){
-    case Left:
-        sx -=1;
-        break;
-    case Right:
-        sx +=1;
-        break;
-    case Down:
-        sy += 1;
-        break;
-    }
-
-    if(sx < 0 || sx >= boardWidth || sy < 0 || sy >= boardHeight)
-        return false;
-
-    for(int i=sy; i<sy+4; i++)
-        for(int j=sx; j<sx+4; j++)
-            if(this->board[i][j] != 0 && this->currentBlock->getSquare(i-sy, j-sx) != 0)
-                return false;
-
-    return true;
+    // qDebug("game over");
+    this->timer.stop();
 }
 
-bool Widget::isBlockDrawable()
-{
-    return !(this->isBlockAndBoardOverlap());
-}
-
-bool Widget::isBlockAbleToRotate()
-{
-    this->currentBlock->rotate(1);
-
-    bool result = !(this->isBlockAndBoardOverlap());
-
-    this->currentBlock->rotate(-1);
-
-    return result;
-}
-
-bool Widget::isBlockAndBoardOverlap()
-{
-    int sy = this->currentBlock->getPy();
-    int sx = this->currentBlock->getPx();
-
-    for(int i=sy; i<sy+4; i++)
-        for(int j=sx; j<sx+4; j++)
-            if(this->board[i][j] != 0 && this->currentBlock->getSquare(i-sy, j-sx) != 0)
-                return true;
-
-    return false;
-}
 
 Qt::GlobalColor Widget::typeToColor(int type)
 {
@@ -305,11 +161,16 @@ Qt::GlobalColor Widget::typeToColor(int type)
 
 void Widget::on_btnStart_clicked()
 {
-    this->initialStatus = false;
-    if(this->playGame == false)
+    switch(this->game->getGameStatus())
+    {
+    case GameInitialStatus:
+    case GameOver:
         this->gameStart();
-    else
+        break;
+    case GamePlaying:
         this->gameOver();
+        break;
+    }
 
     update();
 }
@@ -322,36 +183,21 @@ bool Widget::eventFilter(QObject *watched, QEvent *event)
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         switch(keyEvent->key()) {
         case Qt::Key_Left:
-            if(this->isBlockAbleToMove(Left)) {
-                this->currentBlock->move(Left);
-                update();
-            }
+            this->game->moveBlock(Left);
             break;
         case Qt::Key_Right:
-            if(this->isBlockAbleToMove(Right)) {
-                this->currentBlock->move(Right);
-                update();
-            }
+            this->game->moveBlock(Right);
             break;
         case Qt::Key_Up:
-            if(this->isBlockAbleToRotate()) {
-                this->currentBlock->rotate(1);
-                update();
-            }
+            this->game->rotateBlock();
             break;
         case Qt::Key_Down:
-            if(this->isBlockAbleToMove(Down)) {
-                this->currentBlock->move(Down);
-                update();
-            }
+            this->game->moveBlock(Down);
             break;
         case Qt::Key_Space:
-            while(this->isBlockAbleToMove(Down)) {
-                this->currentBlock->move(Down);
-            }
-            this->newBlock();
-            update();
+            this->game->moveBlock(ToBottom);
             break;
         }
+        update();
     }
 }

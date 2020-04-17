@@ -6,11 +6,14 @@
 #include <QObject>
 #include <QKeyEvent>
 #include "defines.h"
+#include "game.h"
 #include "block.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
+
+const int blockSize = 20;
 
 class Widget : public QWidget
 {
@@ -28,14 +31,8 @@ private slots:
 
 private:
     Ui::Widget *ui;
+    Game *game;
     QTimer timer;
-    int gameDelay;
-    int board[boardHeight][boardWidth];
-    bool playGame;
-    bool initialStatus;
-    Block *currentBlock;
-    int score;
-    int level;
 
     void init();
     void paintEvent(QPaintEvent *e);
@@ -43,17 +40,6 @@ private:
     void drawBlock(QPainter &p);
     void drawSquare(QPainter &p, int y, int x, int type);
     void drawGameOver(QPainter &p);
-    void boardInit();
-    void addBlockToBoard();
-    void breakBlocks();
-    void newBlock();
-    void moveAboveColumns(int column);
-    bool isBlockAbleToMove(Direction dir);
-    bool isBlockDrawable();
-    bool isBlockAbleToRotate();
-    bool isBlockAndBoardOverlap();
-    bool isGameOver();
-    void adjustGameLevel();
     void gameStart();
     void gameOver();
 
