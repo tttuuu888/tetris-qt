@@ -37,6 +37,7 @@ void Widget::onTimer()
 
 void Widget::paintEvent(QPaintEvent *e)
 {
+    Q_UNUSED(e);
     QPainter p(this);
 
     this->drawBoard(p);
@@ -199,5 +200,11 @@ bool Widget::eventFilter(QObject *watched, QEvent *event)
             break;
         }
         update();
+
+        return true;
+    }
+    else
+    {
+        return QObject::eventFilter(watched, event);
     }
 }

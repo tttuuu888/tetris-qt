@@ -151,6 +151,8 @@ void Block::move(Direction dir)
     case Down:
         this->py++;
         break;
+    default:
+        break;
     }
 }
 
@@ -191,5 +193,5 @@ int Block::getType()
 
 int Block::getSquare(int y, int x)
 {
-   return this->block[y][x];
+    return this->block[y][x];
 }

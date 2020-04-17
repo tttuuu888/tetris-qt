@@ -1,5 +1,4 @@
 #include <QTime>
-#include <QTimer>
 #include "game.h"
 
 Game::Game(int boardWidth, int boardHeight, int maxDelay, int minDelay)
@@ -40,11 +39,6 @@ void Game::init()
                 this->board[i*this->boardWidth + j] = 1;
             else
                 this->board[i*this->boardWidth + j] = 0;
-
-    int *tp = new int[100];
-    tp[0] = 10;
-    tp[2*3] = 20;
-
 }
 
 void Game::setLevel(int level)
@@ -181,6 +175,8 @@ bool Game::isBlockAbleToMove(Direction dir)
         break;
     case Down:
         sy += 1;
+        break;
+    default:
         break;
     }
 

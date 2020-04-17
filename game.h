@@ -37,7 +37,6 @@ private:
     int level;
     int score;
     GameStatus gameStatus;
-
     Block *currentBlock;
 
     void addCurrentwBlockToBoard();
