@@ -15,7 +15,7 @@ QT_END_NAMESPACE
 
 const int blockSize = 20;
 const int boardStartX = 20;
-const int boardStartY = 40;
+const int boardStartY = 80;
 
 class Widget : public QWidget
 {
