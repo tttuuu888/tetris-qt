@@ -203,7 +203,7 @@ bool Widget::eventFilter(QObject *watched, QEvent *event)
             this->game->moveBlock(Down);
             break;
         case Qt::Key_Space:
-            this->game->moveBlock(ToBottom);
+            this->game->moveBlockToBottom();
             break;
         }
         update();

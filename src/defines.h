@@ -5,7 +5,6 @@ enum Direction {
     Left = 1,
     Right,
     Down,
-    ToBottom
 };
 
 enum GameStatus {

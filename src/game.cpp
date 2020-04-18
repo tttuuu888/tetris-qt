@@ -250,20 +250,19 @@ GameStatus Game::getGameStatus()
 
 void Game::moveBlock(Direction dir)
 {
-    if(dir == ToBottom)
-    {
-        while(this->isBlockAbleToMove(Down)) {
-            this->currentBlock->move(Down);
-        }
-
-        this->newBlock();
-    }
-    else
-    {
-        if(this->isBlockAbleToMove(dir))
-            this->currentBlock->move(dir);
-    }
+    if(this->isBlockAbleToMove(dir))
+        this->currentBlock->move(dir);
 }
+
+void Game::moveBlockToBottom()
+{
+    while(this->isBlockAbleToMove(Down)) {
+        this->currentBlock->move(Down);
+    }
+
+    this->newBlock();
+}
+
 void Game::rotateBlock()
 {
     if(this->isBlockAbleToRotate())

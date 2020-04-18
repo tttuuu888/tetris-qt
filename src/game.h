@@ -25,6 +25,7 @@ public:
     void gamePlayTurn();
     GameStatus getGameStatus();
     void moveBlock(Direction dir);
+    void moveBlockToBottom();
     void rotateBlock();
 
 private:
