@@ -175,6 +175,7 @@ void Widget::on_btnStart_clicked()
         this->gameStart();
         break;
     case GamePlaying:
+        this->game->gameOver();
         this->gameOver();
         break;
     }
