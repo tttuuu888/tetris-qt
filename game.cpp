@@ -115,7 +115,6 @@ void Game::breakBlocks()
         if(emptySquares == 0) {
             this->moveAboveColumnsDown(i);
             this->score += 100;
-            this->gameDelay -= 100;
         }
     }
 
