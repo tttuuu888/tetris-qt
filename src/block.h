@@ -16,7 +16,7 @@ public:
     int getSquare(int x, int y);
 
 private:
-    int block[4][4];
+    int block[16];
     int type;
     int rotation;
     int initialPx;
