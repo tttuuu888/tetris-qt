@@ -137,6 +137,7 @@ void Widget::gameStart()
 void Widget::gameOver()
 {
     // qDebug("game over");
+    this->game->gameOver();
     this->timer.stop();
 }
 
@@ -175,7 +176,6 @@ void Widget::on_btnStart_clicked()
         this->gameStart();
         break;
     case GamePlaying:
-        this->game->gameOver();
         this->gameOver();
         break;
     }
