@@ -14,7 +14,7 @@ Game::Game(int boardWidth, int boardHeight, int maxDelay, int minDelay)
     this->gameStatus = GameInitialStatus;
 
     this->board = new int[boardWidth * boardHeight];
-    this->currentBlock = new Block(2);
+    this->currentBlock = new Block(qrand()%7 + 2, boardWidth / 2 - 2, 1);
 
     this->init();
 }
@@ -88,7 +88,7 @@ int Game::getBlockPositionY()
 
 int Game::getBlockSquareValue(int x, int y)
 {
-    return this->currentBlock->getSquare(y, x);
+    return this->currentBlock->getSquare(x, y);
 }
 
 void Game::addCurrentwBlockToBoard()
@@ -99,7 +99,7 @@ void Game::addCurrentwBlockToBoard()
     for(int i=sy; i<sy+4; i++)
         for(int j=sx; j<sx+4; j++)
             if(this->board[i*this->boardWidth + j] == 0)
-                this->board[i*this->boardWidth + j] = this->currentBlock->getSquare(i-sy, j-sx);
+                this->board[i*this->boardWidth + j] = this->currentBlock->getSquare(j-sx, i-sy);
 }
 
 void Game::breakBlocks()
@@ -143,7 +143,7 @@ void Game::updateGameLevel()
 
 void Game::updateGameDelay()
 {
-    int newDealy = this->gameDelay = this->maxGameDelay - (this->level * 100);
+    int newDealy = this->maxGameDelay - (this->level * 100);
     this->gameDelay = newDealy > this->minGameDelay ? newDealy : this->minGameDelay;
 }
 
@@ -184,7 +184,7 @@ bool Game::isBlockAbleToMove(Direction dir)
 
     for(int i=sy; i<sy+4; i++)
         for(int j=sx; j<sx+4; j++)
-            if(this->board[i*this->boardWidth + j] != 0 && this->currentBlock->getSquare(i-sy, j-sx) != 0)
+            if(this->board[i*this->boardWidth + j] != 0 && this->currentBlock->getSquare(j-sx, i-sy) != 0)
                 return false;
 
     return true;
@@ -213,7 +213,7 @@ bool Game::isBlockAndBoardOverlap()
 
     for(int i=sy; i<sy+4; i++)
         for(int j=sx; j<sx+4; j++)
-            if(this->board[i*this->boardWidth + j] != 0 && this->currentBlock->getSquare(i-sy, j-sx) != 0)
+            if(this->board[i*this->boardWidth + j] != 0 && this->currentBlock->getSquare(j-sx, i-sy) != 0)
                 return true;
 
     return false;

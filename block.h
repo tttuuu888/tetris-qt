@@ -6,19 +6,21 @@
 class Block
 {
 public:
-    Block(int type);
+    Block(int type, int px, int py);
     void init(int type);
     void move(Direction dir);
     void rotate(int dir);
     int getPx();
     int getPy();
     int getType();
-    int getSquare(int y, int x);
+    int getSquare(int x, int y);
 
 private:
     int block[4][4];
     int type;
     int rotation;
+    int initialPx;
+    int initialPy;
     int px;
     int py;
 };

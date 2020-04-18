@@ -121,8 +121,11 @@ const int allBlocks[7][4][4][4] = {
       {0,0,0,0}}},
 };
 
-Block::Block(int type)
+Block::Block(int type, int px, int py)
 {
+    this->initialPx = px;
+    this->initialPy = py;
+
     this->init(type);
 }
 
@@ -135,8 +138,8 @@ void Block::init(int type)
         for(int j=0; j<4; j++)
             this->block[i][j] = allBlocks[type-2][this->rotation][i][j];
 
-    this->px = 5;
-    this->py = 1;
+    this->px = this->initialPx;
+    this->py = this->initialPy;
 }
 
 void Block::move(Direction dir)
@@ -191,7 +194,7 @@ int Block::getType()
     return this->type;
 }
 
-int Block::getSquare(int y, int x)
+int Block::getSquare(int x, int y)
 {
     return this->block[y][x];
 }
