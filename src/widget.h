@@ -14,6 +14,8 @@ namespace Ui { class Widget; }
 QT_END_NAMESPACE
 
 const int blockSize = 20;
+const int boardStartX = 20;
+const int boardStartY = 40;
 
 class Widget : public QWidget
 {

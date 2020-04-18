@@ -89,8 +89,8 @@ void Widget::drawBlock(QPainter &p)
 
 void Widget::drawSquare(QPainter &p, int y, int x, int type)
 {
-    const int startY = 40;
-    const int startX = 20;
+    const int startX = boardStartX;
+    const int startY = boardStartY;
 
     int xx = startX + (x * blockSize);
     int yy = startY + (y * blockSize);
@@ -109,13 +109,19 @@ void Widget::drawGameOver(QPainter &p)
     // qDebug("game over draw");
     ui->btnStart->setText("Start");
 
-    p.fillRect(QRect(40,200,200,100), QBrush(QColor(155,0,255,128)));
-    p.setFont(QFont("Arial", 25));
+    const int fontSize = 25;
+    const int sx = boardStartX + blockSize;
+    const int sy = (this->game->getBoardHeight() * blockSize + boardStartY) / 2 - fontSize;
+    const int width = blockSize * (this->game->getBoardWidth()-2);
+    const int height = 100;
+
+    p.fillRect(QRect(sx,sy,width,height), QBrush(QColor(110,0,255,170)));
+    p.setFont(QFont("Arial", fontSize));
     p.setPen(Qt::red);
-    p.drawText(QRect(30, 140, 220, 180), Qt::AlignCenter, "Game Over");
+    p.drawText(QRect(sx, sy, width, height-fontSize-3), Qt::AlignCenter, "Game Over");
 
     QString result = QString::asprintf("Score : %d", this->game->getScore());
-    p.drawText(QRect(30, 170, 220, 180), Qt::AlignCenter, result);
+    p.drawText(QRect(sx, sy, width, height+fontSize+3), Qt::AlignCenter, result);
 }
 
 void Widget::gameStart()
