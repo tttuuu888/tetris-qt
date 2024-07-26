@@ -7,7 +7,7 @@
 class Game
 {
 public:
-    Game(int boardWidth, int boardHeight, int maxDelay=1200, int minDelay=100);
+    Game(int boardWidth, int boardHeight, int maxDelay = 1200, int minDelay = 100);
     ~Game();
     void init();
     void setLevel(int level);

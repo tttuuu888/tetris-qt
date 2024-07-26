@@ -18,7 +18,6 @@ Game::Game(int boardWidth, int boardHeight, int maxDelay, int minDelay)
     this->init();
 }
 
-
 Game::~Game()
 {
     delete this->board;
@@ -33,12 +32,12 @@ void Game::init()
     int block = QRandomGenerator::global()->bounded(0, 7);
     this->currentBlock->init(block + 2);
 
-    for(int i=0; i<this->boardHeight; i++)
-        for(int j=0; j<this->boardWidth; j++)
-            if(i==0 || i == this->boardHeight - 1 || j==0 || j== this->boardWidth -1)
-                this->board[i*this->boardWidth + j] = 1;
+    for (int i = 0; i < this->boardHeight; i++)
+        for (int j = 0; j < this->boardWidth; j++)
+            if (i == 0 || i == this->boardHeight - 1 || j == 0 || j == this->boardWidth - 1)
+                this->board[i * this->boardWidth + j] = 1;
             else
-                this->board[i*this->boardWidth + j] = 0;
+                this->board[i * this->boardWidth + j] = 0;
 }
 
 void Game::setLevel(int level)
@@ -68,7 +67,7 @@ int Game::getBoardHeight()
 
 int Game::getBoardValue(int x, int y)
 {
-    return this->board[y*this->boardWidth + x];
+    return this->board[y * this->boardWidth + x];
 }
 
 int Game::getGameDelay()
@@ -96,41 +95,39 @@ void Game::addCurrentwBlockToBoard()
     int sy = this->currentBlock->getPy();
     int sx = this->currentBlock->getPx();
 
-    for(int i=sy; i<sy+4; i++)
-        for(int j=sx; j<sx+4; j++)
-            if(this->board[i*this->boardWidth + j] == 0)
-                this->board[i*this->boardWidth + j] = this->currentBlock->getSquare(j-sx, i-sy);
+    for (int i = sy; i < sy + 4; i++)
+        for (int j = sx; j < sx + 4; j++)
+            if (this->board[i * this->boardWidth + j] == 0)
+                this->board[i * this->boardWidth + j] = this->currentBlock->getSquare(j - sx, i - sy);
 }
 
 void Game::breakBlocks()
 {
-    for(int i=1; i<this->boardHeight-1; i++) {
+    for (int i = 1; i < this->boardHeight - 1; i++) {
         int emptySquares = 0;
 
-        for(int j=1; j<this->boardWidth-1; j++) {
-            if(this->board[i*this->boardWidth + j] == 0)
+        for (int j = 1; j < this->boardWidth - 1; j++) {
+            if (this->board[i * this->boardWidth + j] == 0)
                 emptySquares++;
         }
 
-        if(emptySquares == 0) {
+        if (emptySquares == 0) {
             this->moveAboveColumnsDown(i);
             this->score += 100;
         }
     }
-
 }
 
 void Game::moveAboveColumnsDown(int column)
 {
-    for(int i=column; i>1; i--)
-        for(int j=1; j<this->boardWidth-1; j++)
-            this->board[i*this->boardWidth + j] = this->board[(i-1)*this->boardWidth + j];
+    for (int i = column; i > 1; i--)
+        for (int j = 1; j < this->boardWidth - 1; j++)
+            this->board[i * this->boardWidth + j] = this->board[(i - 1) * this->boardWidth + j];
 }
-
 
 void Game::updateGameLevel()
 {
-    if(this->score / 1000 < this->level)
+    if (this->score / 1000 < this->level)
         return;
 
     this->level++;
@@ -139,7 +136,6 @@ void Game::updateGameLevel()
 
     this->updateGameDelay();
 }
-
 
 void Game::updateGameDelay()
 {
@@ -167,12 +163,12 @@ bool Game::isBlockAbleToMove(Direction dir)
     int sy = this->currentBlock->getPy();
     int sx = this->currentBlock->getPx();
 
-    switch(dir){
+    switch (dir) {
     case Left:
-        sx -=1;
+        sx -= 1;
         break;
     case Right:
-        sx +=1;
+        sx += 1;
         break;
     case Down:
         sy += 1;
@@ -181,12 +177,12 @@ bool Game::isBlockAbleToMove(Direction dir)
         break;
     }
 
-    if(sx < 0 || sx >= this->boardWidth || sy < 0 || sy >= this->boardHeight)
+    if (sx < 0 || sx >= this->boardWidth || sy < 0 || sy >= this->boardHeight)
         return false;
 
-    for(int i=sy; i<sy+4; i++)
-        for(int j=sx; j<sx+4; j++)
-            if(this->board[i*this->boardWidth + j] != 0 && this->currentBlock->getSquare(j-sx, i-sy) != 0)
+    for (int i = sy; i < sy + 4; i++)
+        for (int j = sx; j < sx + 4; j++)
+            if (this->board[i * this->boardWidth + j] != 0 && this->currentBlock->getSquare(j - sx, i - sy) != 0)
                 return false;
 
     return true;
@@ -213,9 +209,9 @@ bool Game::isBlockAndBoardOverlap()
     int sy = this->currentBlock->getPy();
     int sx = this->currentBlock->getPx();
 
-    for(int i=sy; i<sy+4; i++)
-        for(int j=sx; j<sx+4; j++)
-            if(this->board[i*this->boardWidth + j] != 0 && this->currentBlock->getSquare(j-sx, i-sy) != 0)
+    for (int i = sy; i < sy + 4; i++)
+        for (int j = sx; j < sx + 4; j++)
+            if (this->board[i * this->boardWidth + j] != 0 && this->currentBlock->getSquare(j - sx, i - sy) != 0)
                 return true;
 
     return false;
@@ -236,12 +232,12 @@ void Game::gameOver()
 
 void Game::gamePlayTurn()
 {
-    if(this->isBlockAbleToMove(Down))
+    if (this->isBlockAbleToMove(Down))
         this->currentBlock->move(Down);
     else
         this->newBlock();
 
-    if(!this->isBlockDrawable())
+    if (!this->isBlockDrawable())
         this->gameOver();
 }
 
@@ -252,13 +248,13 @@ GameStatus Game::getGameStatus()
 
 void Game::moveBlock(Direction dir)
 {
-    if(this->isBlockAbleToMove(dir))
+    if (this->isBlockAbleToMove(dir))
         this->currentBlock->move(dir);
 }
 
 void Game::moveBlockToBottom()
 {
-    while(this->isBlockAbleToMove(Down)) {
+    while (this->isBlockAbleToMove(Down)) {
         this->currentBlock->move(Down);
     }
 
@@ -267,6 +263,6 @@ void Game::moveBlockToBottom()
 
 void Game::rotateBlock()
 {
-    if(this->isBlockAbleToRotate())
+    if (this->isBlockAbleToRotate())
         this->currentBlock->rotate(1);
 }

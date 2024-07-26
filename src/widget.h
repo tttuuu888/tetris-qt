@@ -10,7 +10,10 @@
 #include "block.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class Widget; }
+namespace Ui
+{
+class Widget;
+}
 QT_END_NAMESPACE
 
 const int blockSize = 20;
@@ -29,7 +32,7 @@ private slots:
     void on_btnStart_clicked();
 
     void onTimer();
-    bool eventFilter(QObject* watched, QEvent* event);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private:
     Ui::Widget *ui;
