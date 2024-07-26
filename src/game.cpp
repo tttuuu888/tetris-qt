@@ -1,10 +1,9 @@
-#include <QTime>
+#include <QRandomGenerator>
 #include "game.h"
 
 Game::Game(int boardWidth, int boardHeight, int maxDelay, int minDelay)
 {
-    QTime time = QTime::currentTime();
-    qsrand((uint)time.msec());
+    int block = QRandomGenerator::global()->bounded(0, 7);
 
     this->boardWidth = boardWidth;
     this->boardHeight = boardHeight;
@@ -14,7 +13,7 @@ Game::Game(int boardWidth, int boardHeight, int maxDelay, int minDelay)
     this->gameStatus = GameInitialStatus;
 
     this->board = new int[boardWidth * boardHeight];
-    this->currentBlock = new Block(qrand()%7 + 2, boardWidth / 2 - 2, 1);
+    this->currentBlock = new Block(block + 2, boardWidth / 2 - 2, 1);
 
     this->init();
 }
@@ -31,7 +30,8 @@ void Game::init()
     this->level = 1;
     this->score = 0;
 
-    this->currentBlock->init(qrand()%7 + 2);
+    int block = QRandomGenerator::global()->bounded(0, 7);
+    this->currentBlock->init(block + 2);
 
     for(int i=0; i<this->boardHeight; i++)
         for(int j=0; j<this->boardWidth; j++)
@@ -149,10 +149,12 @@ void Game::updateGameDelay()
 
 void Game::newBlock()
 {
+    int block = QRandomGenerator::global()->bounded(0, 7);
+
     this->addCurrentwBlockToBoard();
     this->breakBlocks();
     this->updateGameLevel();
-    this->currentBlock->init(qrand()%7 + 2);
+    this->currentBlock->init(block + 2);
 }
 
 bool Game::isGameOver()
